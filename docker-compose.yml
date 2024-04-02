@@ -1,0 +1,20 @@
+version: "3"
+services:
+  app:
+    image: lucas/frete-rapido-go:latest
+    build:
+      context: .
+    ports:
+      - "9000:9000"
+  db:
+    image: postgres:16
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: senhasupersegura
+      POSTGRES_DB: frete_rapido
+    ports:
+      - "5432:5432"
+
+volumes:
+  db_data:
