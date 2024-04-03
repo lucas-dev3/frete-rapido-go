@@ -6,27 +6,28 @@ import (
 	"log"
 
 	"github.com/lucas-dev3/frete-rapido-go.git/internal/entity"
-	"github.com/lucas-dev3/frete-rapido-go.git/internal/http/presenter"
-	freterapido "github.com/lucas-dev3/frete-rapido-go.git/pkg/frete_rapido"
+	shippingquote "github.com/lucas-dev3/frete-rapido-go.git/pkg/shipping_quote"
 )
 
 type Service struct {
-	repo        Repository
-	freterapido *freterapido.FreteRapido
+	repo                 Repository
+	ShippingQuoteFetcher shippingquote.ShippingQuoteFetcher
 }
 
-func NewService(repo Repository) *Service {
+func NewService(repo Repository, sqf shippingquote.ShippingQuoteFetcher) *Service {
 	return &Service{
-		repo: repo,
+		repo:                 repo,
+		ShippingQuoteFetcher: sqf,
 	}
 }
 
-func (s *Service) ProcessQuote(ctx context.Context, quote *presenter.QuoteRequest) error {
+func (s *Service) ProcessQuote(ctx context.Context, quote *entity.Quote) error {
 	log.Println("[Service] ProcessQuote started")
+	log.Println("estou no service useCase")
 
-	fmt.Printf("Quote: %+v\n", *quote)
+	qr := shippingquote.ToShippingQuoteEntity(quote)
 
-	resp, err := s.freterapido.CalculateQuote(presenter.NewFreightQuoteRequest(quote))
+	resp, err := s.ShippingQuoteFetcher.SimulateQuote(ctx, qr)
 	if err != nil {
 		log.Println("[Service] Error while processing quote")
 		return err

@@ -13,17 +13,20 @@ import (
 func ProcessQuote(s quote.UseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		log.Println("[Service] Processo de cotaçao iniciado")
+		log.Println("estou no handler gin")
 		var p presenter.QuoteRequest
 
-		if err := bindData(c, &p); err != nil {
-			log.Println("[Service] Erro ao processar request")
-			respondAccept(c, http.StatusBadRequest, gin.H{"error": err.Error()})
+		if err := c.BindJSON(&p); err != nil {
+			log.Println("[Service] Erro ao fazer bind do JSON")
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
-		if err := s.ProcessQuote(c, &p); err != nil {
+		eq := p.ToQuoteEntity()
+
+		if err := s.ProcessQuote(c, eq); err != nil {
 			log.Println("[Service] Erro ao processar cotaçao")
-			respondAccept(c, http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 

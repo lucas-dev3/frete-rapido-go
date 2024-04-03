@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/lucas-dev3/frete-rapido-go.git/internal/entity"
-	"github.com/lucas-dev3/frete-rapido-go.git/internal/http/presenter"
 )
 
 type Repository interface {
@@ -13,6 +12,6 @@ type Repository interface {
 }
 
 type UseCase interface {
-	ProcessQuote(ctx context.Context, quote *presenter.QuoteRequest) error
+	ProcessQuote(ctx context.Context, quote *entity.Quote) error
 	GetMetrics(ctx context.Context) ([]*entity.Quote, error)
 }

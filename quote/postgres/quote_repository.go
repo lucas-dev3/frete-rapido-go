@@ -16,7 +16,7 @@ func NewQuoteRepository(db *pgx.Conn) *QuoteRepository {
 }
 
 func (qr *QuoteRepository) Save(ctx context.Context, quote *entity.Quote) error {
-	_, err := qr.DB.Exec(ctx, "INSERT INTO quotes (carrier_id, name, service, final_price, deadline) VALUES ($1, $2, $3, $4, $5)", quote.CarrierID, quote.Name, quote.Service, quote.FinalPrice, quote.Deadline)
+	_, err := qr.DB.Exec(ctx, "INSERT INTO quotes (carrier_id, name, service, final_price, deadline) VALUES ($1, $2, $3, $4, $5)", quote.Carrier.CarrierID, quote.Carrier.Name, quote.Service, quote.FinalPrice, quote.Deadline)
 	if err != nil {
 		return err
 	}
@@ -33,7 +33,7 @@ func (qr *QuoteRepository) FindAll(ctx context.Context) ([]*entity.Quote, error)
 	var quotes []*entity.Quote
 	for rows.Next() {
 		var q entity.Quote
-		err := rows.Scan(&q.CarrierID, &q.Name, &q.Service, &q.FinalPrice, &q.Deadline)
+		err := rows.Scan(&q.Carrier.CarrierID, &q.Carrier.Name, &q.Service, &q.FinalPrice, &q.Deadline)
 		if err != nil {
 			return nil, err
 		}
